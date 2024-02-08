@@ -96,12 +96,12 @@ const uploadAvarter = async (req, res) => {
         const imgname = userId + '.jpg'
         const dbpath = path.join(path.join('upload/')) + imgname
         const imgpath = path.join(path.join(path.dirname(require.main.filename), '/upload/')) + imgname;
-        await sharp(img.data).resize(300, 300).toFile(imgpath)
-        console.log(imgpath)
+        const imgBuffer = await sharp(img.data).resize({ width: 300, height: 300 }).png().toBuffer()
+
         await userModel.findByIdAndUpdate(
-            userId, { Avatar: dbpath }, { new: true }
+            userId, { Avatar: imgBuffer }, { new: true }
         ).then((data) => {
-            console.log(data)
+
             return res.status(200).json(data)
         })
 
@@ -110,5 +110,17 @@ const uploadAvarter = async (req, res) => {
     }
 
 }
+const getAvatar = async (req, res) => {
+    try {
+        const userId = req.params.userId
+        const user = await userModel.findById(userId);
+        if (user) {
+            res.set('Content-Type', 'image/png')
+            res.send(user.Avatar)
+        }
+    } catch (err) {
 
-module.exports = { registerUser, loginUser, findUser, getUser, findUserByName, uploadAvarter }
+    }
+}
+
+module.exports = { getAvatar, registerUser, loginUser, findUser, getUser, findUserByName, uploadAvarter }

@@ -5,9 +5,12 @@ const userRoute = require("./Routes/userRoute")
 const chatRoute = require("./Routes/chatRoute")
 const msgRoute = require("./Routes/msgRoute")
 const fileupload = require('express-fileupload')
+const { Octokit } = require('@octokit/core')
 const app = express();
 require("dotenv").config()
-
+const octokit = new Octokit({
+    auth: process.env.GITHUB_TOKEN
+})
 app.use(express.json())
 app.use(cors())
 app.use(fileupload()).use("/users", userRoute)
