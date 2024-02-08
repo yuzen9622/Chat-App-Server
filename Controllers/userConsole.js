@@ -114,7 +114,7 @@ const getAvatar = async (req, res) => {
     try {
         const userId = req.params.userId
         const user = await userModel.findById(userId);
-        if (user) {
+        if (user && user.Avatar) {
             res.set('Content-Type', 'image/png')
             res.send(user.Avatar)
         }
