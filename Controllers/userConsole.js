@@ -97,6 +97,7 @@ const uploadAvarter = async (req, res) => {
         const dbpath = path.join(path.join('upload/')) + imgname
         const imgpath = path.join(path.join(path.dirname(require.main.filename), '/upload/')) + imgname;
         await sharp(img.data).resize(300, 300).toFile(imgpath)
+        console.log(imgpath)
         await userModel.findByIdAndUpdate(
             userId, { Avatar: dbpath }, { new: true }
         ).then((data) => {
