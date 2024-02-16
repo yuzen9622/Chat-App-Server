@@ -98,7 +98,7 @@ const uploadAvarter = async (req, res) => {
         const { img } = req.files;
         const userId = req.body.userId
         const allowedTypes = ['image/jpeg', 'image/png'];
-        if (!allowedTypes.find(type => type == img.mimetype)) throw "error";
+        if (!allowedTypes.find(type => type == img.mimetype)) return
 
         const imgBuffer = await sharp(img.data).resize({ width: 300, height: 300 }).png().toBuffer()
 
