@@ -20,8 +20,15 @@ const userSchema = new mongoose.Schema({
         minlength: 7,
         maxlength: 100
     },
+    bio: {
+        type: String,
+        maxlength: 100
+    },
     Avatar: {
         type: Buffer
+    },
+    email_id: {
+        type: String
     }
 
 }, {
