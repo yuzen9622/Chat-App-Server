@@ -23,7 +23,13 @@ const registerUser = async (req, res) => {
             return res.status(400).json("請填寫所有輸入框!");
         }
         if (!validator.isEmail(email)) return res.status(400).json("不是正確的電子郵件格式");
-        user = new userModel({ name, email, password, bio: "" })
+        const spliceEmail = (email) => {
+            const mailId = email.split("@");
+            const id = "@" + mailId[0];
+            return id
+        }
+        const email_id = spliceEmail(email)
+        user = new userModel({ name, email, password, bio: "", email_id: email_id })
 
         const salt = await bcrypt.genSalt(10)
         user.password = await bcrypt.hash(user.password, salt)
@@ -32,7 +38,7 @@ const registerUser = async (req, res) => {
 
         const token = createtoken(user._id)
 
-        res.status(200).json({ _id: user._id, name, email, token })
+        res.status(200).json({ _id: user._id, name, email, token, email_id })
     } catch (err) {
         console.error(err);
         res.status(500).json(err)
@@ -71,7 +77,7 @@ const findUser = async (req, res) => {
 const findUserByName = async (req, res) => {
     const userName = req.params.userName;
     try {
-        const user = await userModel.find({ "name": { "$regex": userName, "$options": "i" } })
+        const user = await userModel.find({ $or: [{ "name": { "$regex": userName, "$options": "i" } }, { "email_id": userName }] })
         if (user) return res.status(200).json(user)
     } catch (err) {
         console.error(err);
