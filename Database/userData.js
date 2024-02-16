@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema({
     },
     Avatar: {
         type: Buffer
+    },
+    email_id: {
+        type: String
     }
 
 }, {
