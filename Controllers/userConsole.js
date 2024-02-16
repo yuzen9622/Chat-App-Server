@@ -71,7 +71,7 @@ const findUser = async (req, res) => {
 const findUserByName = async (req, res) => {
     const userName = req.params.userName;
     try {
-        const user = await userModel.find({ "name": { "$regex": userName, "$opyions": "i" } })
+        const user = await userModel.find({ "name": { "$regex": userName, "$options": "i" } })
         if (user) return res.status(200).json(user)
     } catch (err) {
         console.error(err);
@@ -123,7 +123,7 @@ const getAvatar = async (req, res) => {
 const updateUser = async (req, res) => {
     const { userId, name, email, bio } = req.body
     try {
-        if (!email && !name) return res.status(500).json("輸入框不可為空直")
+        if (!email && !name) return res.send(req.body)
         await userModel.findByIdAndUpdate(userId, { name: name, email: email, bio: bio }, { new: true })
             .then((data) => {
                 res.status(200).send(data)
