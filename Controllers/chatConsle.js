@@ -1,5 +1,5 @@
 const chatModel = require("../Database/chatData");
-
+const msgModel = require('../Database/msgData')
 const createChat = async (req, res) => {
     const { firstId, secondId } = req.body;
 
@@ -53,9 +53,11 @@ const findChats = async (req, res) => {
 const delChat = async (req, res) => {
     const { userId, secondId } = req.params;
     try {
-        await chatModel.findOneAndDelete({
+        const delchat = await chatModel.findOneAndDelete({
             members: { $all: [userId, secondId] }
         })
+        const chatId = delchat._id
+        await msgModel.deleteMany({ chatId: chatId })
         const chats = await chatModel.find({
             members: { $in: [userId] }
         })
