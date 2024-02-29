@@ -1,9 +1,9 @@
 const msgModel = require("../Database/msgData");
 
 const createMsg = async (req, res) => {
-    const { chatId, senderId, text, isRead } = req.body;
+    const { chatId, senderId, text, isRead,repeatmsg } = req.body;
     const message = new msgModel({
-        chatId, senderId, text, isRead
+        chatId, senderId, text, isRead,repeatMsg:repeatmsg
     })
     try {
         const response = await message.save()
@@ -31,7 +31,7 @@ const readMsg = async (req, res) => {
 
     try {
 
-        const updateMsg = await msgModel.updateMany(
+        await msgModel.updateMany(
             { chatId: chatId, senderId: senderId }, { $set: { isRead: true } })
         const messages = await msgModel.find({ chatId })
 
