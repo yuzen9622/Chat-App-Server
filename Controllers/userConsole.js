@@ -22,12 +22,15 @@ const registerUser = async (req, res) => {
         if (!name || !password || !email) {
             return res.status(400).json("請填寫所有輸入框!");
         }
+        if(name.length<3) return res.status(400).json("名稱請超過三個字元!")
+        if(password.length<8) return res.status(400).json("密碼必須超過七個字元")
         if (!validator.isEmail(email)) return res.status(400).json("不是正確的電子郵件格式");
         const spliceEmail = (email) => {
             const mailId = email.split("@");
             const id = "@" + mailId[0];
             return id
         }
+        
         const email_id = spliceEmail(email)
         user = new userModel({ name, email, password, bio: "", email_id: email_id })
 
