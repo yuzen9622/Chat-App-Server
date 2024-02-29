@@ -4,7 +4,8 @@ const msgSchema = new mongoose.Schema({
     chatId: String,
     senderId: String,
     text: String,
-    isRead: Boolean
+    isRead: Boolean,
+    repeatMsg:Object
 }, {
     timestamps: true
 })
