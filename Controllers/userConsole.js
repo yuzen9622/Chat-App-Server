@@ -101,9 +101,9 @@ const uploadAvarter = async (req, res) => {
         const { img } = req.files;
         const userId = req.body.userId
         const allowedTypes = ['image/jpeg', 'image/png'];
-        if (!allowedTypes.find(type => type == img.mimetype)) return
-
-        const imgBuffer = await sharp(img.data).resize({ width: 300, height: 300 }).png().toBuffer()
+        if(!img||!userId)return res.status(200).json("無照片或Id");
+        if (!allowedTypes.find(type => type == img.mimetype)) return res.status(200).json("照片格式不對")
+        const imgBuffer = await sharp(img.data).resize({ width: 300, height: 300 }).toBuffer()
 
         await userModel.findByIdAndUpdate(
             userId, { Avatar: imgBuffer }, { new: true }
