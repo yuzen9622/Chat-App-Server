@@ -1,5 +1,5 @@
 const chatModel = require("../Database/chatData");
-
+const msgModel = require('../Database/msgData')
 const createChat = async (req, res) => {
     const { firstId, secondId } = req.body;
 
@@ -43,6 +43,7 @@ const findChats = async (req, res) => {
         const chat = await chatModel.find({
             members: { $all: [firstId, secondId] }
         })
+
         res.status(200).json(chat);
     } catch (err) {
         console.error(err);
@@ -52,9 +53,18 @@ const findChats = async (req, res) => {
 const delChat = async (req, res) => {
     const { userId, secondId } = req.params;
     try {
-
+        const delchat = await chatModel.findOneAndDelete({
+            members: { $all: [userId, secondId] }
+        })
+        const chatId = delchat._id
+        await msgModel.deleteMany({ chatId: chatId })
+        const chats = await chatModel.find({
+            members: { $in: [userId] }
+        })
+        if (chats) res.json(chats)
+        else res.json("not found")
     } catch (err) {
 
     }
 }
-module.exports = { createChat, findUserChats, findChats }
+module.exports = { createChat, findUserChats, findChats, delChat }
