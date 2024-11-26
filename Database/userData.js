@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       maxlength: 100,
     },
     Avatar: {
-      type: Buffer,
+      type: Boolean,
     },
     email_id: {
       type: String,

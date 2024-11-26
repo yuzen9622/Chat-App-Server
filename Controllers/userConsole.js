@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const nodemailer = require("nodemailer");
+const avatarModel = require("../Database/AvatarData");
 const createtoken = (_id) => {
   const jwtkey = process.env.JWT_SECRET_KEY;
   return jwt.sign({ _id }, jwtkey, { expiresIn: "3d" });
@@ -71,8 +72,15 @@ const registerUser = async (req, res) => {
       email,
       token,
       email_id,
-      Avatar: imgBuffer || null,
+      Avatar: imgBuffer ? true : false,
     });
+    if (imgBuffer) {
+      new avatarModel({
+        Avatar: imgBuffer,
+        userId: user._id,
+      });
+    }
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -182,11 +190,22 @@ const uploadAvarter = async (req, res) => {
       .resize({ width: 300, height: 300 })
       .toBuffer();
 
-    await userModel
-      .findByIdAndUpdate(userId, { Avatar: imgBuffer }, { new: true })
-      .then((data) => {
-        return res.status(200).json(data);
-      });
+    const avater = await avatarModel.findOneAndUpdate(
+      {
+        userId: userId,
+      },
+      {
+        Avatar: imgBuffer,
+      }
+    );
+    console.log("up", avater);
+    if (!avater) {
+      await new avatarModel({
+        userId: userId,
+        Avatar: imgBuffer,
+      }).save();
+    }
+    return res.status(200).json("create successful");
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -194,10 +213,12 @@ const uploadAvarter = async (req, res) => {
 const getAvatar = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const user = await userModel.findById(userId);
-    if (user && user.Avatar) {
+    const user = await avatarModel.findOne({ userId: userId });
+    if (user) {
       res.set("Content-Type", "image/png");
-      res.send(user.Avatar);
+      res.status(200).send(user.Avatar);
+    } else {
+      res.status(500).send(false);
     }
   } catch (err) {
     res.status(404).send("not found");
