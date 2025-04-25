@@ -55,7 +55,7 @@ const registerUser = async (req, res) => {
       password,
       bio: "",
       email_id: email_id,
-      Avatar: imgBuffer || "",
+      Avatar: imgBuffer ? true : false,
       OTP: OTP,
     });
 
